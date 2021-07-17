@@ -1,0 +1,25 @@
+.postdiv {
+  display: flex;
+  flex-direction: column;
+}
+
+.postForm {
+  display: flex;
+  flex-direction: column;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.postSubmitBtn {
+  position: fixed;
+  top: calc(100vh - 450px);
+}
+
+.inputarea {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.inputbox {
+  width: 100%;
+}

@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 class Post extends React.Component {
   constructor(props){
     super(props);
-    this.state = { changeUrlTimer: "", url: "", fetchUrl: false };
+    this.state = { changeUrlTimer: "", url: "", fetchUrl: false, page: {} };
     this.changeUrl = this.changeUrl.bind(this);
     this.fetchUrl = this.fetchUrl.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
@@ -39,17 +39,17 @@ class Post extends React.Component {
   }
 
   // URLからOGPを取得する
-  fetchUrl() {
+  async fetchUrl() {
     console.log(this.state.url)
-    const url = "https://api.github.com/user/";
+    const url = "https://selectbook-bot.herokuapp.com/get?url=" + this.state.url;
     const requestOptions ={
-      method: 'POST',
+      method: 'GET',
       headers:{'Content-Type': 'application/json'},
-      body: JSON.stringify({url: this.state.url})
     };
-    fetch(url,requestOptions).then((response)=> response.json()
+    await fetch(url,requestOptions).then((response)=> response.json()
     ).then((responseJson) =>{
-      console.log(responseJson)
+      this.setState({page: responseJson});
+      console.log(responseJson);
     })
     this.setState({changeUrlTimer: "", fetchUrl: true});
   }
@@ -63,6 +63,7 @@ class Post extends React.Component {
       // Fetchする
       await this.fetchUrl();
     }
+    console.log(this.state.page);
     // Firestoreに登録
   }
 

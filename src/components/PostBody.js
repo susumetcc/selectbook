@@ -7,6 +7,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from '@material-ui/core/Typography';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
+import MultilineText from './MultilineText';
 import NoImg from '../img/noimg.jpg';
 
 const useStyles = makeStyles((theme) => ({
@@ -34,6 +35,12 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     letterSpacing: "0.03em",
     color: "#555046",
+  },
+  suggestTitleMultiline: {
+    display: "-webkit-box",
+    overflow: "hidden",
+    "-webkit-line-clamp": "3",
+    "-webkit-box-orient": "vertical",
   },
   // 推薦記事表示領域
   suggestedView: {
@@ -96,7 +103,7 @@ export default function PostBody(props) {
       <Grid container spacing={0} direction="column" style={{ alignItems: "center", justifyContent: "center"}}>
         <Grid item>
           <Typography variant="body2" className={classes.suggestTitle}>
-            {data.reason}
+            <MultilineText className={classes.suggestTitleMultiline}>{data.reason}</MultilineText>
           </Typography>
         </Grid>
         <Grid item xs={12} sm container className={classes.suggestedView} direction="column">

@@ -37,7 +37,7 @@ class Home extends React.Component {
       let data = doc.data();
       data.docId = doc.id;
       if(data.thumbnail.length === 0) {
-        data.thumbnail[0] = NoImg;
+        data.thumbnail = NoImg;
       }
       usershot.forEach(userdoc => {
         if(userdoc.id === data.recommender) {
@@ -58,10 +58,14 @@ class Home extends React.Component {
 
   render() {
     let list = this.state.list;
+    let listItems = []
+    for ( const itemdata of list) {
+      listItems.push(<PostBody key={itemdata.docId} data={itemdata} />)
+    }
     console.log(list);
     return (
       <div style={{display: "flex", flexWrap: "wrap"}}>
-        <PostBody data={list[0]} />
+        {listItems}
       </div>
     )
   }

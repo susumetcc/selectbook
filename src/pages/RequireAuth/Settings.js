@@ -219,15 +219,17 @@ export default class Settings extends React.Component {
     console.log(this.state)
     return (
       <>
-        <p>設定です</p>
+        <h1>アカウント設定</h1>
+        <h2>マイプロフィール</h2>
         <IconButton
           edge="end"
           className={"settngs-icon"}
           aria-label="account of current user"
           aria-haspopup="true"
+          title="画像をアップロードしてプロフィールアイコンを変更します"
           component="label"
         >
-          <Avatar alt={this.state.nowname} src={this.state.avatarUrl} style={{height:"40px", width:"40px"}} />
+          <Avatar alt={this.state.nowname} src={this.state.avatarUrl} style={{height:"96px", width:"96px"}} />
           <input
             type="file"
             onChange={this.changeAvatarUrl}

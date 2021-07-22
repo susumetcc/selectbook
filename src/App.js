@@ -10,7 +10,8 @@ import Auth from "./components/Authentication/Auth"
 import Home from "./pages/Home";
 // import Article from "./pages/Article";
 import Book from "./pages/Book";
-import Post from "./pages/Post";
+import Post from "./pages/RequireAuth/Post";
+import Settings from "./pages/RequireAuth/Settings";
 
 // CSSスタイル
 const theme = createTheme({
@@ -36,6 +37,7 @@ function App() {
             {/* <Route exact path="/p/:docid" component={Article}></Route> */}
             {/* ここから下は認証が必要なページ */}
             <Route exact path="/post"><Auth path="/post" component={Post}></Auth></Route>
+            <Route exact path="/settings"><Auth path="/settings" component={Settings}></Auth></Route>
             {/* どれにもマッチしなかったらユーザページを表示する */}
             <Route exact path="/:userid" component={Book}></Route>
           </Switch>

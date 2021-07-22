@@ -9,7 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from "@material-ui/core/Typography";
 import Snackbar from '@material-ui/core/Snackbar';
 import AuthForm from "../../components/Authentication/AuthForm";
-import LoginProvider from "../../components/Authentication/LoginProvider";
+import LoginProvider, { SignupLoginHandler } from "../../components/Authentication/LoginProvider";
 import "./Signup.css";
 import getQueryStrings from "../../utils/getQueryStrings";
 
@@ -68,25 +68,7 @@ class Signin extends React.Component {
     this.setState({isChecking: true});
     await auth.signInWithPopup(provider).then(async (result) => {
       console.log("認証成功: " + result.user.uid);
-      db.collection("users").doc(result.user.uid).get().then(async doc => {
-        if (!doc.exists) {
-          const displayid = result.user.uid
-          await db.collection("users").doc(result.user.uid).set({
-            pageUrl: "",
-            name: result.user.displayName,
-            displayid: displayid,
-            avatarUrl: result.user.photoURL,
-            intro: "",
-            favorite: [],
-            follow: [],
-            follower: 0,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-          await db.collection("displayids").doc(displayid).set({
-            uid: result.user.uid,
-          });
-        }
-      })
+      SignupLoginHandler(result.user);
       this.setState({isSignin: true});
     }).catch((error) => {
       console.log(error)
@@ -94,10 +76,13 @@ class Signin extends React.Component {
     });
   }
 
+  // Apple認証
   // async appleLoginHandler() {
   //   const provider = new firebase.auth.OAuthProvider('apple.com');
   //   this.setState({isChecking: true});
   //   await auth.signInWithPopup(provider).then((result) => {
+  //     console.log("認証成功: " + result.user.uid);
+  //     SignupLoginHandler(result.user);
   //     this.setState({isSignin: true});
   //   }).catch((error) => {
   //     console.log(error)
@@ -161,7 +146,9 @@ class Signin extends React.Component {
               {this.state.isChecking?
                 <p>認証中...</p>
               :
-                <LoginProvider google={this.googleLoginHandler} />
+                <LoginProvider
+                  google={this.googleLoginHandler}
+                />
               }
             </div>
             <p>

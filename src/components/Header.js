@@ -9,6 +9,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Badge from "@material-ui/core/Badge";
 import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
+import Avatar from '@material-ui/core/Avatar';
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { auth, db } from "../settings/firebase";
 import AuthCheck from "../components/Authentication/Check";
@@ -66,7 +67,8 @@ const barStyle = makeStyles(() => ({
   accountCircle: {
     width: "44px",
     height: "44px",
-    color: "#555046",
+    alignItems: "center",
+    justifyContent: "center",
   },
   AppSignup: {
     height: "44px",
@@ -108,6 +110,41 @@ const barStyle = makeStyles(() => ({
   }
 }));
 
+class UserAccountCircle extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = { name: "", avatarUrl: "" };
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.componentWillUnmount = this.componentWillUnmount.bind(this);
+  }
+
+  _isMounted = false;
+
+  componentDidMount() {
+    const user = auth.currentUser;
+    if (user !== null) {
+      this.setState({name: user.displayName, avatarUrl: user.photoURL});
+    }
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  render() {
+    if(this.state.avatarUrl !== "") {
+      return (
+        <Avatar alt={this.state.name} src={this.state.avatarUrl} style={{height:"40px", width:"40px"}} />
+      )
+    } else {
+      return (
+        <AccountCircle style={{height:"40px", width:"40px", color:"#555046"}}/>
+      )
+    }
+  }
+}
+
 // 現在のパスをパラメタにセットする
 function nowlocation() {
   const redirect = getQueryStrings(window.location.search)["redirect"];
@@ -133,15 +170,16 @@ export default function Header() {
 
   const handleDisplayUserPage = async () => {
     setAnchorEl(null);
-    await auth.onAuthStateChanged(user => {
-      if (user) {
-        db.collection("users").doc(user.uid).get().then(doc => {
-          window.location.href = "/" + doc.data().displayid;
-        }).catch(error => {
-          return;
-        })
-      }
-    })
+    const user = auth.currentUser;
+    if (user !== null) {
+      db.collection("users").doc(user.uid).get().then(doc => {
+        window.location.href = "/" + doc.data().displayid;
+      }).catch(error => {
+        return;
+      })
+    } else {
+      return;
+    }
   };
 
   const renderAccountMenu = (
@@ -156,7 +194,7 @@ export default function Header() {
       onClose={handleAccountMenuClose}
     >
       <MenuItem onClick={handleDisplayUserPage}>マイディスプレイ</MenuItem>
-      <MenuItem component="a" href="/" onClick={handleAccountMenuClose}>プロフィール</MenuItem>
+      <MenuItem component="a" href="/settings" onClick={handleAccountMenuClose}>アカウント設定</MenuItem>
       <MenuItem component="a" href={"/signout" + nowlocation()} onClick={handleAccountMenuClose}>ログアウト</MenuItem>
     </Menu>
   );
@@ -187,7 +225,7 @@ export default function Header() {
                 aria-haspopup="true"
                 onClick={handleAccountMenuOpen}
               >
-                <AccountCircle className={classes.accountCircle} />
+                <UserAccountCircle className={classes.accountCircle} />
               </IconButton>
               <Button className={classes.AppPost} href="/post">
                 投稿する

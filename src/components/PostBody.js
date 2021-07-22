@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "12px",
 
     alignItems: "center",
+    textAlign: "justify",
     letterSpacing: "0.03em",
     color: "#555046",
   },

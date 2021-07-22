@@ -5,7 +5,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
-import firebase, { db, storage, auth } from '../settings/firebase';
+import firebase, { db, storage, auth } from '../../settings/firebase';
 import './Post.css'
 
 const useStyles = makeStyles((theme) => ({

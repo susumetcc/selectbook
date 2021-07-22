@@ -6,6 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import firebase, { auth, db } from '../../settings/firebase';
 import AuthForm from "../../components/Authentication/AuthForm";
+import LoginProvider, { SignupLoginHandler } from "../../components/Authentication/LoginProvider";
 import "./Signup.css";
 import getQueryStrings from "../../utils/getQueryStrings";
 
@@ -21,12 +22,13 @@ class Signup extends React.Component {
     } else if(query) {
       redirect = getQueryStrings(query)['redirect'];
     }
-    this.state = {email: '', password: '', name: '', isSignin: false, redirect: decodeURIComponent(redirect)};
+    this.state = {email: '', password: '', name: '', isSignin: false, isChecking: false, redirect: decodeURIComponent(redirect)};
 
     this.mailChange = this.mailChange.bind(this);
     this.passChange = this.passChange.bind(this);
     this.nameChange = this.nameChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.googleLoginHandler = this.googleLoginHandler.bind(this);
   }
 
   mailChange(event) {
@@ -72,6 +74,21 @@ class Signup extends React.Component {
     });
   }
 
+  /* サードパーティ製プロバイダによる認証 */
+  // Google認証
+  async googleLoginHandler() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    this.setState({isChecking: true});
+    await auth.signInWithPopup(provider).then(async (result) => {
+      console.log("認証成功: " + result.user.uid);
+      SignupLoginHandler(result.user);
+      this.setState({isSignin: true});
+    }).catch((error) => {
+      console.log(error)
+      this.setState({open: true, isChecking: false});
+    });
+  }
+
   render() {
     return (
       <Grid container justifyContent="center">
@@ -107,6 +124,15 @@ class Signup extends React.Component {
                   onChangePass={this.passChange}
                   type={"サインアップは無料です"}
                 />
+                <div>
+                  {this.state.isChecking?
+                    <p>認証中...</p>
+                  :
+                    <LoginProvider
+                      google={this.googleLoginHandler}
+                    />
+                  }
+                </div>
                 <p>
                   すでにアカウントをお持ちの方は
                   <Link to={this.state.redirect === "/" ? "/signin" : "/signin?redirect=" + encodeURIComponent(this.state.redirect)}>

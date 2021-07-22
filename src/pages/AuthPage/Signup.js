@@ -93,7 +93,7 @@ class Signup extends React.Component {
     return (
       <Grid container justifyContent="center">
         { this.state.isSignin === true ?
-          <Redirect to={this.state.redirect} />
+          <Redirect to={"/settings?skippable=true&redirect=" + encodeURIComponent(this.state.redirect)} />
         :
           <Grid item maxwidth="xs">
             <div>

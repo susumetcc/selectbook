@@ -50,9 +50,11 @@ class Signup extends React.Component {
     .then(async (userCredential) => {
       // Signed in
       var user = userCredential.user;
+      const displayid = user.uid
       await db.collection("users").doc(user.uid).set({
         pageUrl: "",
         name: this.state.name,
+        displayid: displayid,
         avatarUrl: "",
         intro: "",
         favorite: [],
@@ -60,18 +62,19 @@ class Signup extends React.Component {
         follower: 0,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
+      await db.collection("displayids").doc(displayid).set({
+        uid: user.uid,
+      });
       this.setState({isSignin: true});
     })
     .catch((error) => {
-      var errorCode = error.code;
-      var errorMessage = error.message;
       console.log(error);
     });
   }
 
   render() {
     return (
-      <Grid container justify="center">
+      <Grid container justifyContent="center">
         { this.state.isSignin === true ?
           <Redirect to={this.state.redirect} />
         :

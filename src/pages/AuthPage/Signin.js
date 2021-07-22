@@ -1,7 +1,7 @@
   
 import React from "react";
 import { Link, Redirect } from 'react-router-dom';
-import firebase, { auth } from '../../settings/firebase';
+import firebase, { auth, db } from '../../settings/firebase';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import PersonIcon from '@material-ui/icons/Person';
@@ -66,7 +66,27 @@ class Signin extends React.Component {
   async googleLoginHandler() {
     const provider = new firebase.auth.GoogleAuthProvider();
     this.setState({isChecking: true});
-    await auth.signInWithPopup(provider).then((result) => {
+    await auth.signInWithPopup(provider).then(async (result) => {
+      console.log("認証成功: " + result.user.uid);
+      db.collection("users").doc(result.user.uid).get().then(async doc => {
+        if (!doc.exists) {
+          const displayid = result.user.uid
+          await db.collection("users").doc(result.user.uid).set({
+            pageUrl: "",
+            name: result.user.displayName,
+            displayid: displayid,
+            avatarUrl: result.user.photoURL,
+            intro: "",
+            favorite: [],
+            follow: [],
+            follower: 0,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+          await db.collection("displayids").doc(displayid).set({
+            uid: result.user.uid,
+          });
+        }
+      })
       this.setState({isSignin: true});
     }).catch((error) => {
       console.log(error)

@@ -1,5 +1,5 @@
 import { Button } from '@material-ui/core';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
 import Signup from "./pages/AuthPage/Signup";
 import Signin from "./pages/AuthPage/Signin";
@@ -9,7 +9,7 @@ import Header from './components/Header'
 import Auth from "./components/Authentication/Auth"
 import Home from "./pages/Home";
 // import Article from "./pages/Article";
-import Timeline from "./pages/Timeline";
+import Book from "./pages/Book";
 import Post from "./pages/Post";
 
 // CSSスタイル
@@ -28,14 +28,17 @@ function App() {
       <div className="App">
         <Header />
         <Router>
-          <Route exact path="/" component={Home}></Route>
-          <Route exact path="/signup" component={Signup}></Route>
-          <Route exact path="/signin" component={Signin}></Route>
-          {/* <Route exact path="/p/:docid" component={Article}></Route> */}
-          <Route exact path="/t/:userid" component={Timeline}></Route>
-          <Route exact path="/signout" component={Signout}></Route>
-          {/* ここから下は認証が必要なページ */}
-          <Route exact path="/post"><Auth path="/post" component={Post}></Auth></Route>
+          <Switch>
+            <Route exact path="/" component={Home}></Route>
+            <Route exact path="/signup" component={Signup}></Route>
+            <Route exact path="/signin" component={Signin}></Route>
+            <Route exact path="/signout" component={Signout}></Route>
+            {/* <Route exact path="/p/:docid" component={Article}></Route> */}
+            {/* ここから下は認証が必要なページ */}
+            <Route exact path="/post"><Auth path="/post" component={Post}></Auth></Route>
+            {/* どれにもマッチしなかったらユーザページを表示する */}
+            <Route exact path="/:userid" component={Book}></Route>
+          </Switch>
         </Router>
       </div>
     </MuiThemeProvider>

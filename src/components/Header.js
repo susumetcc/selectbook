@@ -10,6 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import Badge from "@material-ui/core/Badge";
 import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import { auth, db } from "../settings/firebase";
 import AuthCheck from "../components/Authentication/Check";
 import getQueryStrings from "../utils/getQueryStrings";
 
@@ -130,6 +131,19 @@ export default function Header() {
     setAnchorEl(null);
   };
 
+  const handleDisplayUserPage = async () => {
+    setAnchorEl(null);
+    await auth.onAuthStateChanged(user => {
+      if (user) {
+        db.collection("users").doc(user.uid).get().then(doc => {
+          window.location.href = "/" + doc.data().displayid;
+        }).catch(error => {
+          return;
+        })
+      }
+    })
+  };
+
   const renderAccountMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -141,6 +155,7 @@ export default function Header() {
       open={isMenuOpen}
       onClose={handleAccountMenuClose}
     >
+      <MenuItem onClick={handleDisplayUserPage}>マイディスプレイ</MenuItem>
       <MenuItem component="a" href="/" onClick={handleAccountMenuClose}>プロフィール</MenuItem>
       <MenuItem component="a" href={"/signout" + nowlocation()} onClick={handleAccountMenuClose}>ログアウト</MenuItem>
     </Menu>
